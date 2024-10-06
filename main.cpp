@@ -1,5 +1,6 @@
 #include <iostream>
 #include <raylib.h>
+#include <deque>
 using namespace std;
 
 Color white = {255, 255, 255, 255};
@@ -7,6 +8,20 @@ Color black = {0, 0, 0, 255};
 
 int cellsize = 30;
 int cellcount = 25;
+
+class Snake{
+    public:
+        deque<Vector2> body = {Vector2{6,9}, Vector2{5,9}, Vector2{4,9}};
+
+        void Draw(){
+            for(unsigned i=0; i<body.size(); i++){
+                float x = body[i].x;
+                float y = body[i].y;
+                Rectangle segment = Rectangle{x*cellsize, y*cellsize, (float)cellsize, (float)cellsize};
+                DrawRectangleRounded(segment, 0.5, 6, black);
+            }
+        }
+};
 
 class Food{
     public:
@@ -42,6 +57,7 @@ int main () {
     SetTargetFPS(144);
 
     Food food = Food();
+    Snake snake = Snake();
 
     while(WindowShouldClose() == false){
         BeginDrawing();
@@ -49,6 +65,7 @@ int main () {
         //Drawing
         ClearBackground(white);
         food.Draw();
+        snake.Draw();
 
         EndDrawing();
     }
