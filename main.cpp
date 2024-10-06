@@ -9,6 +9,7 @@ Color black = {0, 0, 0, 255};
 
 int cellsize = 30;
 int cellcount = 25;
+int offset = 75;
 
 double lastUpdateTime=0;
 
@@ -40,7 +41,7 @@ class Snake{
             for(unsigned i=0; i<body.size(); i++){
                 float x = body[i].x;
                 float y = body[i].y;
-                Rectangle segment = Rectangle{x*cellsize, y*cellsize, (float)cellsize, (float)cellsize};
+                Rectangle segment = Rectangle{offset+x*cellsize, offset+y*cellsize, (float)cellsize, (float)cellsize};
                 DrawRectangleRounded(segment, 0.5, 6, black);
             }
         }
@@ -78,7 +79,7 @@ class Food{
         }
 
         void Draw(){
-            DrawTexture(texture, position.x * cellsize, position.y * cellsize, BLACK);
+            DrawTexture(texture, offset+position.x * cellsize, offset+position.y * cellsize, BLACK);
         }
 
         Vector2 GenerateRandomCell(){
@@ -102,6 +103,7 @@ class Game{
         Snake snake = Snake();
         Food food = Food(snake.body);
         bool running = true;
+        int score = 0;
 
         void Draw(){
             food.Draw();
@@ -121,6 +123,7 @@ class Game{
             if(Vector2Equals(snake.body[0], food.position)){
                 food.position = food.GenerateRandomPos(snake.body);
                 snake.addSegment = true;
+                score++;
             }
         }
 
@@ -137,6 +140,7 @@ class Game{
             snake.Reset();
             food.position = food.GenerateRandomPos(snake.body);
             running = false;
+            score=0;
         }
 
         void CheckCollisionWithTail(){
@@ -151,7 +155,7 @@ class Game{
 int main () {
 
     cout<<"Starting the game....";
-    InitWindow(cellsize*cellcount, cellsize*cellcount, "Retro Snake");
+    InitWindow(2*offset + cellsize*cellcount, 2*offset + cellsize*cellcount, "Retro Snake");
     SetTargetFPS(144);
 
     Game game = Game();
@@ -182,6 +186,9 @@ int main () {
 
         //Drawing
         ClearBackground(white);
+        DrawRectangleLinesEx(Rectangle{(float)offset - 5, (float)offset - 5, (float)cellsize*cellcount + 10, (float)cellsize*cellcount + 10}, 5, black);
+        DrawText("Retro Snake", offset-5, 20, 40, black);
+        DrawText(TextFormat("%i", game.score), offset-5, offset+cellsize*cellcount+10, 40, black);
         game.Draw();
 
         EndDrawing();
